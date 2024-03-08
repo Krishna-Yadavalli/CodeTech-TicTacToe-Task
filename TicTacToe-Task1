@@ -1,0 +1,152 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+
+public class TicTacToe {
+    // ArrayList keep track of player's positions
+    static ArrayList<Integer> playerPositions = new ArrayList<Integer>();
+    // ArrayList keep track of computer's positions
+    static ArrayList<Integer> computerPositions = new ArrayList<Integer>();
+
+    public static void main(String[] args) {
+        // 3x3 grid represented by a 2D array
+        char[][] gameBox = {{' ', '|', ' ', '|', ' '},
+                            {'-', '+', '-', '+', '-'},
+                            {' ', '|', ' ', '|', ' '},
+                            {'-', '+', '-', '+', '-'},
+                            {' ', '|', ' ', '|', ' '}};
+
+        printBoard(gameBox); // Print the initial game board
+
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            System.out.println("Enter the position between 1 to 9:");
+            int playerPos = sc.nextInt(); // Get player's move
+            // Check if the position is already taken by player or computer
+            while (computerPositions.contains(playerPos) || playerPositions.contains(playerPos)) {
+                System.out.println("Position taken! Enter a correct Position");
+                playerPos = sc.nextInt(); // Get a new position from the player
+            }
+            placeValue(gameBox, playerPos, "player1"); // Place player's move on the board
+
+            String result = checkWinner(); // Check for a winner or a draw
+            if (!result.isEmpty()) {
+                System.out.println(result); // Print the result
+                break; // End the game
+            }
+
+            Random r = new Random();
+            int computerPos = r.nextInt(9) + 1; // Generate computer's move randomly
+            // Check if the position is already taken by player or computer
+            while (computerPositions.contains(computerPos) || playerPositions.contains(computerPos)) {
+                computerPos = r.nextInt(9) + 1; // Generate a new position for the computer
+            }
+
+            placeValue(gameBox, computerPos, "computer"); // Place computer's move on the board
+
+            printBoard(gameBox); // Print the updated game board
+
+            result = checkWinner(); // Check for a winner or a draw
+            if (!result.isEmpty()) {
+                System.out.println(result); // Print the result
+                break; // End the game
+            }
+        }
+        sc.close(); // Close the scanner
+    }
+
+    // Method to print the Tic-Tac-Toe game board
+    public static void printBoard(char[][] gameBox) {
+        for (char[] row : gameBox) {
+            for (char c : row) {
+                System.out.print(c); // Print each character in the row
+            }
+            System.out.println(); // Move to the next line after printing a row
+        }
+    }
+
+    // place a move (X or O) on the game board
+    public static void placeValue(char[][] gameBox, int pos, String user) {
+        char value = ' ';
+        // Add the position to the ArrayList
+        if (user.equals("player1")) {
+            playerPositions.add(pos);
+        } else if (user.equals("computer")) {
+            computerPositions.add(pos);
+        }
+
+        //move on the gameboard based on the position
+        switch (pos) {
+            case 1:
+                gameBox[0][0] = value;
+                break;
+            case 2:
+                gameBox[0][2] = value;
+                break;
+            case 3:
+                gameBox[0][4] = value;
+                break;
+            case 4:
+                gameBox[2][0] = value;
+                break;
+            case 5:
+                gameBox[2][2] = value;
+                break;
+            case 6:
+                gameBox[2][4] = value;
+                break;
+            case 7:
+                gameBox[4][0] = value;
+                break;
+            case 8:
+                gameBox[4][2] = value;
+                break;
+            case 9:
+                gameBox[4][4] = value;
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Method to check for a winner or a draw
+    public static String checkWinner() {
+        // Define all possible winning combinations
+        List<Integer> topRow = Arrays.asList(1, 2, 3);
+        List<Integer> midRow = Arrays.asList(4, 5, 6);
+        List<Integer> botRow = Arrays.asList(7, 8, 9);
+        List<Integer> leftCol = Arrays.asList(1, 4, 7);
+        List<Integer> midCol = Arrays.asList(2, 5, 8);
+        List<Integer> rightCol = Arrays.asList(3, 6, 9);
+        List<Integer> cross1 = Arrays.asList(1, 5, 9);
+        List<Integer> cross2 = Arrays.asList(7, 5, 3);
+
+        // List of all winning combinations
+        List<List<Integer>> winning = new ArrayList<List<Integer>>();
+        winning.add(topRow);
+        winning.add(midRow);
+        winning.add(botRow);
+        winning.add(leftCol);
+        winning.add(midCol);
+        winning.add(rightCol);
+        winning.add(cross1);
+        winning.add(cross2);
+
+    	for(List l : winning) 
+	  	{
+			if(playerPositions.containsAll(l)) 
+			{
+				return "Congrats you won the match!";
+			}else if(computerPositions.containsAll(l))
+			{
+				return "Sorry! Computer wins the match";
+			}else if(playerPositions.size() + computerPositions.size()== 9)
+			{
+				return "CAT!"; 
+			} 
+		}
+		return " "; 
+	}
+}
